@@ -1,4 +1,4 @@
-# MedRound
+# MediCore
 
 A medical AI cross-validation tool that catches discrepancies between written patient charts and spoken patient history using OCR, LLM entity extraction, and real-time voice AI.
 
