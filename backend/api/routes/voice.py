@@ -1,11 +1,15 @@
-from fastapi import APIRouter, WebSocket
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+
+from voice.session import run_voice_session
 
 router = APIRouter()
 
 
 @router.websocket("/voice-session")
 async def voice_session(websocket: WebSocket):
-    """Proxy WebSocket connection to ElevenLabs Conversational AI agent."""
+    """Proxy a real-time ElevenLabs Conversational AI voice session."""
     await websocket.accept()
-    # TODO: call voice.agent.create_voice_session and proxy messages
-    await websocket.close()
+    try:
+        await run_voice_session(websocket)
+    except WebSocketDisconnect:
+        pass
