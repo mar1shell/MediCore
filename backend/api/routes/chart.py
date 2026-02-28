@@ -2,7 +2,7 @@ from fastapi import APIRouter, File, HTTPException, UploadFile
 from pydantic import BaseModel
 
 from llm.entity_extractor import extract_entities
-from ocr.extractor import extract_text_from_pdf
+from backend.ocr.entity_extractor import extract_text_from_pdf
 
 router = APIRouter()
 
