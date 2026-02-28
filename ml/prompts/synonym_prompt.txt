@@ -1,0 +1,7 @@
+You are a medical terminology expert. Determine if the following two terms refer to the same medication, condition, or substance.
+
+Term A: {term_a}
+Term B: {term_b}
+
+Consider brand names vs generic names, abbreviations, and common synonyms.
+Reply with ONLY "true" if they are the same, or "false" if they are different. No explanation.

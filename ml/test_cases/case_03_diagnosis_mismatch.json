@@ -1,0 +1,22 @@
+{
+  "description": "Chart says 'type 2 diabetes mellitus'; patient says 'borderline diabetes' — LOW severity flag",
+  "chart_data": {
+    "allergies": [],
+    "medications": ["metformin 1000mg"],
+    "diagnosis": ["type 2 diabetes mellitus", "hypertension"]
+  },
+  "spoken_data": {
+    "allergies": [],
+    "medications": ["metformin 1000mg"],
+    "diagnosis": ["borderline diabetes", "high blood pressure"]
+  },
+  "expected_flags": [
+    {
+      "severity": "low",
+      "field": "diagnosis",
+      "chart_val": "type 2 diabetes mellitus",
+      "spoken_val": "borderline diabetes",
+      "message": "Possible terminology mismatch: chart records type 2 DM, patient describes condition as borderline diabetes."
+    }
+  ]
+}

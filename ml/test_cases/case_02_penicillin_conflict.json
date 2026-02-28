@@ -1,0 +1,22 @@
+{
+  "description": "Chart says no known drug allergies; patient mentions penicillin allergy — HIGH severity flag",
+  "chart_data": {
+    "allergies": [],
+    "medications": ["amoxicillin 500mg"],
+    "diagnosis": ["sinusitis"]
+  },
+  "spoken_data": {
+    "allergies": ["penicillin"],
+    "medications": ["amoxicillin 500mg"],
+    "diagnosis": ["sinusitis"]
+  },
+  "expected_flags": [
+    {
+      "severity": "high",
+      "field": "allergies",
+      "chart_val": "(none)",
+      "spoken_val": "penicillin",
+      "message": "Patient verbally reports penicillin allergy not present in chart. Amoxicillin is a penicillin-class antibiotic — potential cross-reactivity risk."
+    }
+  ]
+}
