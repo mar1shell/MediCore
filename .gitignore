@@ -45,3 +45,7 @@ Thumbs.db
 
 # PDFs / uploads (real patient data)
 demo/charts/*.pdf
+output/*.json
+
+# Tests
+tests/*.py
