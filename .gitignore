@@ -25,6 +25,7 @@ dist/
 .env
 .env.local
 .env.*.local
+medicore
 
 # Logs
 *.log
