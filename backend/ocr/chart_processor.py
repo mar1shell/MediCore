@@ -1,7 +1,5 @@
 import base64
-from curses import raw
 import logging
-from pathlib import Path
 from typing import Optional
 import httpx
 from backend.ocr.config import OCRConfig
@@ -16,7 +14,12 @@ class ChartProcessor:
     def __init__(self, config: OCRConfig):
         self.config = config
         self.client = httpx.AsyncClient(
-                timeout=self.config.request_timeout,
+                timeout=httpx.Timeout(
+                    connect=30.0,
+                    write=120.0,
+                    read=self.config.request_timeout,
+                    pool=30.0,
+                ),
                 headers={"Authorization": f"Bearer {self.config.api_key}"}
         )
     
@@ -47,12 +50,16 @@ class ChartProcessor:
             response = await self.client.post(self.API_ENDPOINT, json=payload)
             response.raise_for_status()
             return response.json()
-        except httpx.HTTPError as e:
+        except httpx.HTTPStatusError as e:
             raise OCRProcessingError(
                 f"Mistral OCR API returned {e.response.status_code}: {e.response.text}"
             ) from e
+        except httpx.TimeoutException as e:
+            raise OCRProcessingError(
+                f"Mistral OCR API timeout after {self.config.request_timeout}s: {e}"
+            ) from e
         except httpx.RequestError as e:
-            raise OCRProcessingError(f"Network error calling Mistral OCR API : {e}") from e
+            raise OCRProcessingError(f"Network error calling Mistral OCR API: {e}") from e
     
     def _parse_response(self, response: dict, filename: str) -> OCRResult:
         pages_raw = response.get("pages", [])
@@ -74,7 +81,7 @@ class ChartProcessor:
             pages.append(page)
             full_text_parts.append(page_text)
         full_text = "\n\n".join(full_text_parts)
-        return OCRResult(pages=pages, full_text=full_text,
+        return OCRResult(filename=filename, full_text=full_text,
                          pages=pages, model_used=response.get("model", self.OCR_MODEL),
                          pages_processed=response.get("usage_info", {}).get("pages_processed", len(pages)))
     

@@ -37,6 +37,7 @@ class ExtractedEntities:
     medications: list = field(default_factory=list)
     diagnosis: Optional[str] = None
     extraction_notes: Optional[str] = None
+    diagrams: bool = False
     @classmethod
     def empty(cls, source: str) -> "ExtractedEntities":
         return cls(source=source)
@@ -46,6 +47,15 @@ class ExtractedEntities:
     @property
     def medication_names(self) -> list:
         return [m["name"] for m in self.medications]
+    def to_dict(self) -> dict:
+        return {
+            "source": self.source,
+            "allergies": self.allergies,
+            "medications": self.medications,
+            "diagnosis": self.diagnosis,
+            "extraction_notes": self.extraction_notes,
+            "diagrams": self.diagrams
+        }
     
 @dataclass
 class DiscrepancyFlag:

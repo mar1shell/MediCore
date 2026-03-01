@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes import chart, voice, cross_reference
+from backend.api.routes import chart, voice, cross_reference
 
 app = FastAPI(
     title="MediCore API",

@@ -1,7 +1,7 @@
 import json
 from typing import Literal
+import logging
 
-import logger
 import httpx
 
 from backend.ocr.config import OCRConfig
@@ -10,7 +10,7 @@ from backend.ocr.prompt_loader import _load_prompt
 
 EXTRACTION_SYSTEM_PROMPT = _load_prompt("extraction_system_prompt.txt")
 EXTRACTION_USER_TEMPLATE = _load_prompt("extraction_user_template.txt")
-logger = logger.get_logger(__name__)
+logger = logging.getLogger(__name__)
 class EntityExtractor:
     LLM_MODEL = "mistral-large-latest"
     API_ENDPOINT = "https://api.mistral.ai/v1/chat/completions"
@@ -48,7 +48,7 @@ class EntityExtractor:
             "response_format": {"type": "json_object"},
             "messages": [
                 {"role": "system", "content": EXTRACTION_SYSTEM_PROMPT},
-                {"role": "user", "content": EXTRACTION_USER_TEMPLATE.format(source=source_label, text=text[:8000])}
+                {"role": "user", "content": EXTRACTION_USER_TEMPLATE.format(source_type=source_label, text=text[:8000])}
             ]
         }
     
