@@ -1,0 +1,4 @@
+Extract medical entities from the following {source_type} text.
+
+TEXT:
+{text}
