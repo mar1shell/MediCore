@@ -7,8 +7,38 @@ from backend.ocr.models import OCRResult, ChartPage
 
 logger = logging.getLogger(__name__)
 
+# Supported MIME types and their data-URI prefixes
+_PDF_TYPES = {"application/pdf"}
+_IMAGE_TYPES = {"image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"}
+SUPPORTED_MIME_TYPES = _PDF_TYPES | _IMAGE_TYPES
+
+# Map file extensions to MIME types (fallback when content_type is unknown)
+_EXT_TO_MIME = {
+    ".pdf": "application/pdf",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".gif": "image/gif",
+    ".webp": "image/webp",
+}
+
+
+def _detect_mime(filename: str, content_type: Optional[str] = None) -> str:
+    """Resolve MIME type from explicit content_type or filename extension."""
+    if content_type and content_type in SUPPORTED_MIME_TYPES:
+        return content_type
+    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    mime = _EXT_TO_MIME.get(f".{ext}")
+    if mime:
+        return mime
+    raise OCRProcessingError(
+        f"Unsupported file type for '{filename}' (content_type={content_type}). "
+        f"Supported: PDF, JPEG, PNG, GIF, WEBP."
+    )
+
+
 class ChartProcessor:
-    OCR_MODEL = "mistral-ocr-latest" # mistral ocr 3
+    OCR_MODEL = "mistral-ocr-latest"  # mistral ocr 3
     API_ENDPOINT = "https://api.mistral.ai/v1/ocr"
     
     def __init__(self, config: OCRConfig):
@@ -23,25 +53,50 @@ class ChartProcessor:
                 headers={"Authorization": f"Bearer {self.config.api_key}"}
         )
     
-    async def process_pdf(self, pdf_bytes: bytes, filename:str = "chart.pdf") -> OCRResult:
-        logger.info("Starting OCR for '%s' (%d bytes)", filename, len(pdf_bytes))
-        b64_pdf = base64.standard_b64encode(pdf_bytes).decode("utf-8")
-        payload = self._build_payload(b64_pdf, filename)
+    async def process(
+        self,
+        file_bytes: bytes,
+        filename: str = "chart.pdf",
+        content_type: Optional[str] = None,
+    ) -> OCRResult:
+        """Process a PDF or image file through Mistral OCR."""
+        mime = _detect_mime(filename, content_type)
+        logger.info("Starting OCR for '%s' (%d bytes, %s)", filename, len(file_bytes), mime)
+        b64 = base64.standard_b64encode(file_bytes).decode("utf-8")
+        payload = self._build_payload(b64, filename, mime)
         raw_response = await self._call_ocr_api(payload)
         result = self._parse_response(raw_response, filename)
-        logger.info("OCR completed for '%s'", filename,
-                    len(result.pages) if result.pages else 0,
-                    len(result.full_text) if result.full_text else 0)
+        logger.info(
+            "OCR completed for '%s': %d pages, %d chars",
+            filename,
+            len(result.pages) if result.pages else 0,
+            len(result.full_text) if result.full_text else 0,
+        )
         return result
-    
-    def _build_payload(self, b64_pdf: str, filename: str) -> dict:
+
+    # Keep backward-compat alias
+    async def process_pdf(self, pdf_bytes: bytes, filename: str = "chart.pdf") -> OCRResult:
+        return await self.process(pdf_bytes, filename, content_type="application/pdf")
+
+    def _build_payload(self, b64: str, filename: str, mime: str) -> dict:
+        is_image = mime in _IMAGE_TYPES
+        data_uri = f"data:{mime};base64,{b64}"
+
+        if is_image:
+            document = {
+                "type": "image_url",
+                "image_url": data_uri,
+            }
+        else:
+            document = {
+                "type": "document_url",
+                "document_url": data_uri,
+                "document_name": filename,
+            }
+
         return {
             "model": self.OCR_MODEL,
-            "document":{
-                "type":"document_url",
-                "document_url" : f"data:application/pdf;base64,{b64_pdf}",
-                "document_name": filename,
-            },
+            "document": document,
             "include_image_base64": False,
         }
     

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from pydantic import BaseModel
 
-from backend.ocr.chart_processor import ChartProcessor
+from backend.ocr.chart_processor import ChartProcessor, SUPPORTED_MIME_TYPES
 from backend.ocr.entity_extractor import EntityExtractor
 from backend.ocr.config import OCRConfig
 
@@ -24,16 +24,21 @@ class ExtractEntitiesResponse(BaseModel):
 # ---------------------------------------------------------------------------
 @router.post("/upload-chart")
 async def upload_chart(file: UploadFile = File(...)):
-    """Accept a PDF chart, extract OCR text, then extract structured entities."""
-    if file.content_type not in ("application/pdf",):
-        raise HTTPException(status_code=415, detail="Only PDF files are supported.")
+    """Accept a PDF or image chart, extract OCR text, then extract structured entities."""
+    if file.content_type not in SUPPORTED_MIME_TYPES:
+        raise HTTPException(
+            status_code=415,
+            detail=f"Unsupported file type '{file.content_type}'. Accepted: PDF, JPEG, PNG, GIF, WEBP.",
+        )
 
     contents = await file.read()
     
     # Stage 1: OCR extraction
     config = OCRConfig.from_env()
     async with ChartProcessor(config) as processor:
-        ocr_result = await processor.process_pdf(contents, filename=file.filename)
+        ocr_result = await processor.process(
+            contents, filename=file.filename, content_type=file.content_type
+        )
     
     # Stage 2: Entity extraction
     async with EntityExtractor(config) as extractor:

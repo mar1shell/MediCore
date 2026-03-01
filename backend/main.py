@@ -1,5 +1,10 @@
+from pathlib import Path
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+# Load .env from the backend directory
+load_dotenv(Path(__file__).parent / ".env")
 
 from backend.api.routes import chart, voice, cross_reference
 
