@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Medicore AI - Safety Alert</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#8f54ff",
+              secondary: "#d946ef", 
+              warning: "#f97316", 
+              "background-light": "#F8FAFC",
+              "background-dark": "#0F172A",
+              "surface-light": "#FFFFFF",
+              "surface-dark": "#1E293B",
+              "text-main-light": "#1e293b",
+              "text-main-dark": "#f1f5f9",
+              "text-sub-light": "#64748b",
+              "text-sub-dark": "#94a3b8",
+            },
+            fontFamily: {
+              display: ["Urbanist", "sans-serif"],
+              sans: ["Urbanist", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "1rem",
+              "xl": "1.5rem",
+              "2xl": "2rem",
+              "3xl": "3rem",
+            },
+            animation: {
+                'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                'float': 'float 8s ease-in-out infinite',
+                'blink': 'blink 4s infinite',
+            },
+            keyframes: {
+                float: {
+                    '0%, 100%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-12px)' },
+                },
+                blink: {
+                    '0%, 100%': { transform: 'scaleY(1)' },
+                    '5%': { transform: 'scaleY(0.1)' },
+                    '10%': { transform: 'scaleY(1)' },
+                }
+            }
+          },
+        },
+      };
+    </script>
+<style>
+        .orb-alert-gradient {
+            background: radial-gradient(circle at 35% 35%, #fb7185, #d946ef, #7e22ce);background-size: 200% 200%;
+            animation: gradientShift 6s ease infinite;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.2);
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .orb-shadow {
+            background: radial-gradient(ellipse at center, rgba(217, 70, 239, 0.4) 0%, rgba(0,0,0,0) 70%);
+            filter: blur(15px);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        body {
+            font-family: 'Urbanist', sans-serif;
+            min-height: 100dvh;
+        }
+        .slim-warning-border {
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            box-shadow: 0 4px 20px -5px rgba(249, 115, 22, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .slim-warning-border::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 2rem;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.5), transparent);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        .dark .slim-warning-border {
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            box-shadow: 0 4px 20px -5px rgba(249, 115, 22, 0.1);
+        }
+        .eye-glow {
+            box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.6);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen transition-colors duration-300 antialiased overflow-hidden">
+<div class="relative w-full h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-rose-50/50 dark:from-slate-900 dark:via-purple-900/10 dark:to-slate-900 flex flex-col justify-between">
+<div class="px-8 pt-5 pb-2 flex justify-between items-center z-20 text-text-main-light dark:text-text-main-dark">
+<span class="text-sm font-semibold tracking-wide">9:41</span>
+<div class="flex gap-2 items-center text-text-main-light dark:text-text-main-dark">
+<span class="material-symbols-outlined text-[18px]">signal_cellular_alt</span>
+<span class="material-symbols-outlined text-[18px]">wifi</span>
+<span class="material-symbols-outlined text-[18px] rotate-90">battery_full</span>
+</div>
+</div>
+<header class="px-6 py-2 flex justify-between items-center z-10">
+<button class="w-10 h-10 rounded-full bg-white/60 dark:bg-surface-dark/60 backdrop-blur-md flex items-center justify-center border border-white/40 dark:border-white/5 text-text-main-light dark:text-text-main-dark transition-colors hover:bg-white dark:hover:bg-surface-dark">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<div class="flex flex-col items-center">
+<span class="text-[10px] font-bold text-secondary tracking-[0.2em] uppercase mb-0.5">Medicore AI</span>
+<span class="text-sm font-semibold text-text-main-light dark:text-text-main-dark opacity-90">Consultation #4092</span>
+</div>
+<button class="w-10 h-10 rounded-full bg-white/60 dark:bg-surface-dark/60 backdrop-blur-md flex items-center justify-center border border-white/40 dark:border-white/5 text-text-main-light dark:text-text-main-dark transition-colors hover:bg-white dark:hover:bg-surface-dark">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+</button>
+</header>
+<main class="flex-grow flex flex-col items-center justify-center relative z-10 px-6 pb-20">
+<div class="text-center mb-8 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]">
+<h1 class="text-3xl font-bold text-text-main-light dark:text-text-main-dark mb-2 tracking-tight">Dr. Sarah</h1>
+<p class="text-text-sub-light dark:text-text-sub-dark font-medium text-sm bg-white/50 dark:bg-white/5 py-1 px-4 rounded-full inline-block backdrop-blur-sm border border-white/20 dark:border-white/5">
+                Patient: Mary Johnson (Age 64)
+            </p>
+</div>
+<div class="relative w-64 h-64 mb-10 animate-float flex items-center justify-center">
+<div class="absolute inset-0 bg-secondary/30 rounded-full blur-[60px] animate-pulse-slow"></div>
+<div class="w-48 h-48 rounded-full orb-alert-gradient relative flex flex-col items-center justify-center shadow-[inset_-10px_-10px_20px_rgba(0,0,0,0.3),inset_10px_10px_20px_rgba(255,255,255,0.2)] overflow-hidden border border-white/20 dark:border-white/5">
+<div class="absolute top-8 left-8 w-16 h-8 bg-white/30 rounded-full blur-md transform -rotate-45"></div>
+<div class="flex gap-6 z-10 items-center justify-center mt-2 animate-blink">
+<div class="w-10 h-14 bg-white rounded-full eye-glow relative overflow-hidden">
+<div class="absolute bottom-0 right-0 w-full h-1/2 bg-gray-100/20 blur-sm"></div>
+</div>
+<div class="w-10 h-14 bg-white rounded-full eye-glow relative overflow-hidden">
+<div class="absolute bottom-0 right-0 w-full h-1/2 bg-gray-100/20 blur-sm"></div>
+</div>
+</div>
+<div class="w-4 h-1 bg-black/10 rounded-full mt-4 blur-[1px]"></div>
+</div>
+<div class="absolute -bottom-6 w-32 h-6 orb-shadow rounded-[100%]"></div>
+</div>
+<div class="w-full max-w-sm glass-card p-6 rounded-[2rem] slim-warning-border transform transition-all cursor-pointer animate-[slideUp_0.6s_ease-out_forwards] backdrop-blur-xl">
+<div class="flex items-start gap-5">
+<div class="bg-warning/10 dark:bg-warning/20 p-3 rounded-2xl flex-shrink-0 text-warning border border-warning/10 shadow-sm">
+<span class="material-symbols-outlined text-[28px]">warning</span>
+</div>
+<div class="flex-1 pt-0.5">
+<div class="flex items-center justify-between mb-2">
+<h3 class="font-bold text-lg text-text-main-light dark:text-text-main-dark tracking-tight">
+                            Safety Alert
+                        </h3>
+<span class="text-[10px] font-bold text-warning uppercase tracking-widest bg-warning/5 px-2 py-1 rounded-md border border-warning/20">Action Required</span>
+</div>
+<p class="text-[15px] text-text-sub-light dark:text-text-sub-dark leading-relaxed font-normal">
+                        Penicillin allergy noted in chart. <span class="font-semibold text-text-main-light dark:text-text-main-dark">Reconfirm prescription.</span>
+</p>
+</div>
+</div>
+<div class="flex gap-4 mt-6 pt-2">
+<button class="flex-1 bg-gradient-to-r from-warning to-orange-400 text-white py-3.5 rounded-2xl font-bold text-[15px] shadow-[0_4px_14px_rgba(249,115,22,0.3)] hover:shadow-[0_6px_20px_rgba(249,115,22,0.4)] hover:-translate-y-0.5 transition-all duration-300">
+                    Modify Rx
+                </button>
+<button class="flex-1 bg-white dark:bg-surface-dark border border-gray-100 dark:border-gray-700 text-text-main-light dark:text-text-main-dark py-3.5 rounded-2xl font-semibold text-[15px] hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-300 shadow-sm">
+                    Dismiss
+                </button>
+</div>
+</div>
+</main>
+<nav class="bg-white/80 dark:bg-surface-dark/90 backdrop-blur-lg border-t border-gray-100 dark:border-gray-800 px-8 py-5 z-20 w-full shadow-[0_-10px_40px_rgba(0,0,0,0.02)] fixed bottom-0 left-0 right-0">
+<ul class="flex justify-between items-center px-6 max-w-sm mx-auto">
+<li>
+<a class="flex flex-col items-center gap-1.5 group cursor-pointer">
+<div class="p-2 rounded-xl group-hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-[26px] text-primary transition-transform group-hover:scale-110">home</span>
+</div>
+<span class="text-[10px] font-medium text-primary">Home</span>
+</a>
+</li>
+<li>
+<a class="flex flex-col items-center gap-1.5 group cursor-pointer">
+<div class="p-2 rounded-xl group-hover:bg-gray-50 dark:group-hover:bg-gray-800 transition-colors">
+<span class="material-symbols-outlined text-[26px] text-text-sub-light dark:text-text-sub-dark group-hover:text-primary transition-colors group-hover:scale-110">history</span>
+</div>
+<span class="text-[10px] font-medium text-text-sub-light dark:text-text-sub-dark group-hover:text-primary">History</span>
+</a>
+</li>
+<li>
+<a class="flex flex-col items-center gap-1.5 group cursor-pointer">
+<div class="p-2 rounded-xl group-hover:bg-gray-50 dark:group-hover:bg-gray-800 transition-colors">
+<span class="material-symbols-outlined text-[26px] text-text-sub-light dark:text-text-sub-dark group-hover:text-primary transition-colors group-hover:scale-110">person</span>
+</div>
+<span class="text-[10px] font-medium text-text-sub-light dark:text-text-sub-dark group-hover:text-primary">Profile</span>
+</a>
+</li>
+</ul>
+</nav>
+<div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+<div class="absolute -top-[10%] -right-[20%] w-[500px] h-[500px] bg-indigo-200/20 dark:bg-indigo-600/10 rounded-full blur-[100px] mix-blend-multiply dark:mix-blend-normal"></div>
+<div class="absolute top-[40%] -left-[20%] w-[400px] h-[400px] bg-fuchsia-200/20 dark:bg-fuchsia-600/10 rounded-full blur-[80px] mix-blend-multiply dark:mix-blend-normal"></div>
+<div class="absolute bottom-0 right-0 w-[450px] h-[450px] bg-purple-200/20 dark:bg-purple-600/10 rounded-full blur-[90px] mix-blend-multiply dark:mix-blend-normal"></div>
+</div>
+</div>
+</body></html>

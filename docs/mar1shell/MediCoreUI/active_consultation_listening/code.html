@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Professional Listening Mode - Medicore AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#8f54ff",
+              "primary-soft": "#e5cdff",
+              "primary-dark": "#5e2ebf",
+              "secondary": "#ef4444", 
+              "background-light": "#fdfaff",
+              "background-dark": "#0f0818", 
+              "surface-light": "#ffffff",
+              "surface-dark": "#1e142b",
+            },
+            fontFamily: {
+              display: ["Urbanist", "sans-serif"],
+              body: ["Urbanist", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "1rem",
+              "xl": "1.5rem",
+              "2xl": "2rem",
+              "3xl": "3rem",
+            },
+            animation: {
+              'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'float': 'float 8s ease-in-out infinite',
+              'glow': 'glow 3s ease-in-out infinite alternate',
+              'breath': 'breath 6s ease-in-out infinite',
+              'eye-blink': 'blink 4s infinite',
+              'orb-pulse': 'orbPulse 3s infinite ease-in-out',
+            },
+            keyframes: {
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-10px)' },
+              },
+              blink: {
+                '0%, 96%, 100%': { transform: 'scaleY(1)' },
+                '98%': { transform: 'scaleY(0.1)' },
+              },
+              orbPulse: {
+                '0%, 100%': { transform: 'scale(1)', boxShadow: '0 0 40px rgba(255, 255, 255, 0.4), inset 0 -20px 40px rgba(0,0,0,0.2)' },
+                '50%': { transform: 'scale(1.02)', boxShadow: '0 0 60px rgba(255, 255, 255, 0.6), inset 0 -20px 40px rgba(0,0,0,0.2)' },
+              }
+            },
+            backgroundImage: {
+               'orb-gradient': 'radial-gradient(circle at 35% 25%, #d8b4fe 0%, #a855f7 40%, #581c87 100%)',
+            }
+          },
+        },
+      };
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<style>
+    body {
+        font-family: 'Urbanist', sans-serif;
+        min-height: max(884px, 100dvh);
+    }
+    .orb-shadow {
+        box-shadow: 0 40px 60px -10px rgba(124, 58, 237, 0.4);
+    }.bg-high-end {
+        background: linear-gradient(135deg, #f8f6ff 0%, #eef2ff 100%);
+    }
+    .dark .bg-high-end {
+        background: linear-gradient(135deg, #0f0818 0%, #1e1b2e 100%);
+    }
+</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-high-end dark:bg-surface-dark min-h-screen flex flex-col text-slate-800 dark:text-slate-100 overflow-hidden relative transition-colors duration-500">
+<div class="px-6 pt-12 pb-2 flex justify-between items-center z-30 opacity-70">
+<div class="text-sm font-semibold tracking-wide">9:41</div>
+<div class="flex gap-2">
+<span class="material-icons-round text-sm">signal_cellular_alt</span>
+<span class="material-icons-round text-sm">wifi</span>
+<span class="material-icons-round text-sm">battery_full</span>
+</div>
+</div>
+<header class="px-6 py-2 flex justify-between items-center z-30">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition text-slate-600 dark:text-slate-300">
+<span class="material-icons-round">arrow_back_ios_new</span>
+</button>
+<div class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest text-[10px]">Session #4829</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition text-slate-600 dark:text-slate-300">
+<span class="material-icons-round">more_vert</span>
+</button>
+</header>
+<main class="flex-grow flex flex-col relative z-10 px-6 pt-4 pb-8">
+<div class="mx-auto w-full max-w-sm mb-4">
+<div class="bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl p-4 border border-white/60 dark:border-white/5 shadow-sm flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-500 dark:text-indigo-300 shrink-0">
+<span class="material-icons-round text-lg">person</span>
+</div>
+<div>
+<h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Sarah Jenkins</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400">General Checkup</p>
+</div>
+<div class="ml-auto">
+<span class="px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-[10px] font-bold tracking-wide">ACTIVE</span>
+</div>
+</div>
+</div>
+<div class="flex-grow flex flex-col items-center justify-center relative">
+<div class="relative w-64 h-64 flex items-center justify-center">
+<div class="absolute bottom-[-20px] w-32 h-8 bg-purple-900/20 dark:bg-black/40 blur-xl rounded-[100%] animate-pulse-slow"></div>
+<div class="relative w-48 h-48 rounded-full bg-orb-gradient animate-orb-pulse flex items-center justify-center z-20 orb-shadow border border-white/20">
+<div class="absolute top-[10%] left-[15%] w-20 h-12 bg-white/30 rounded-full blur-md transform -rotate-45"></div>
+<div class="flex gap-8 items-center justify-center translate-y-2">
+<div class="relative w-8 h-12 bg-white rounded-full shadow-[0_0_15px_rgba(255,255,255,0.8)] animate-eye-blink"></div>
+<div class="relative w-8 h-12 bg-white rounded-full shadow-[0_0_15px_rgba(255,255,255,0.8)] animate-eye-blink"></div>
+</div>
+<div class="absolute bottom-2 w-32 h-16 bg-gradient-to-t from-purple-900/30 to-transparent rounded-b-full"></div>
+</div>
+<div class="absolute inset-0 -m-8 rounded-full border border-purple-300/20 dark:border-purple-500/10 animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
+</div>
+<div class="mt-16 text-center space-y-2">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/40 dark:bg-white/5 border border-white/30 dark:border-white/10 backdrop-blur-md">
+<span class="relative flex h-1.5 w-1.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-purple-500"></span>
+</span>
+<span class="text-[10px] font-semibold text-slate-500 dark:text-slate-300 tracking-wider uppercase">Listening...</span>
+</div>
+</div>
+</div>
+</main>
+<div class="px-6 pb-8 z-30 w-full flex flex-col gap-6">
+<div class="flex justify-center w-full">
+<button class="group relative flex items-center justify-center gap-2 px-6 py-3 w-48 bg-white dark:bg-surface-dark/90 text-secondary hover:text-red-500 dark:text-red-400 rounded-xl shadow-sm border border-red-100 dark:border-red-900/30 transition-all duration-300 ease-out active:scale-95">
+<span class="material-icons-round text-lg">stop_circle</span>
+<span class="font-semibold text-sm tracking-wide">End Session</span>
+</button>
+</div>
+<nav class="bg-white/90 dark:bg-surface-dark/90 backdrop-blur-xl rounded-2xl px-2 py-3 shadow-lg shadow-slate-200/50 dark:shadow-black/20 flex justify-around items-center border border-white/50 dark:border-white/5">
+<a class="flex flex-col items-center justify-center w-16 gap-1 group" href="#">
+<div class="p-1 rounded-xl bg-primary/10 text-primary transition-colors">
+<span class="material-icons-round text-xl">home</span>
+</div>
+<span class="text-[10px] font-medium text-primary">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center w-16 gap-1 group" href="#">
+<div class="p-1 rounded-xl text-slate-400 dark:text-slate-500 group-hover:text-primary dark:group-hover:text-primary-soft transition-colors">
+<span class="material-icons-round text-xl">history</span>
+</div>
+<span class="text-[10px] font-medium text-slate-400 dark:text-slate-500 group-hover:text-primary dark:group-hover:text-primary-soft">History</span>
+</a>
+<a class="flex flex-col items-center justify-center w-16 gap-1 group" href="#">
+<div class="p-1 rounded-xl text-slate-400 dark:text-slate-500 group-hover:text-primary dark:group-hover:text-primary-soft transition-colors">
+<span class="material-icons-round text-xl">person</span>
+</div>
+<span class="text-[10px] font-medium text-slate-400 dark:text-slate-500 group-hover:text-primary dark:group-hover:text-primary-soft">Profile</span>
+</a>
+</nav>
+</div>
+<div class="fixed top-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-200/30 dark:bg-purple-900/10 rounded-full blur-[120px] -z-10 pointer-events-none mix-blend-multiply dark:mix-blend-screen"></div>
+<div class="fixed bottom-[10%] left-[-10%] w-[400px] h-[400px] bg-blue-100/40 dark:bg-blue-900/10 rounded-full blur-[100px] -z-10 pointer-events-none mix-blend-multiply dark:mix-blend-screen"></div>
+</body></html>

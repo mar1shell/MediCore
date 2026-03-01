@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Medicore AI - Analyzing Consultation</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#8f54ff", 
+              "primary-light": "#a77aff",
+              "background-light": "#fdfcff", 
+              "background-dark": "#1a1025", 
+              "surface-light": "#ffffff",
+              "surface-dark": "#2d1f3d",
+              "orb-dark": "#1a1a2e",
+            },
+            fontFamily: {
+              display: ["Urbanist", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "1rem",
+            },
+            animation: {
+                'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                'float': 'float 6s ease-in-out infinite',
+                'glow': 'glow 3s ease-in-out infinite alternate',
+                'breathe': 'breathe 4s ease-in-out infinite',
+                'eye-blink': 'blink 4s infinite',
+            },
+            keyframes: {
+                float: {
+                    '0%, 100%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-10px)' },
+                },
+                glow: {
+                    'from': { boxShadow: '0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(143, 84, 255, 0.2)' },
+                    'to': { boxShadow: '0 0 40px rgba(255, 255, 255, 0.6), 0 0 80px rgba(143, 84, 255, 0.4)' },
+                },
+                breathe: {
+                    '0%, 100%': { transform: 'scale(1)' },
+                    '50%': { transform: 'scale(1.03)' },
+                },
+                blink: {
+                    '0%, 96%, 100%': { transform: 'scaleY(1)' },
+                    '98%': { transform: 'scaleY(0.1)' },
+                }
+            }
+          },
+        },
+      };
+    </script>
+<style>
+        body {
+            font-family: 'Urbanist', sans-serif;
+        }
+        .bg-gradient-medicore-light {
+            background: linear-gradient(180deg, #fbfaff 0%, #f0f4ff 100%);
+        }
+        .bg-gradient-medicore-dark {
+            background: linear-gradient(180deg, #1e1b2e 0%, #0f172a 100%);
+        }
+        .orb-body {
+            background: radial-gradient(circle at 30% 30%, #a270ff, #4e9fff, #3b2a60);
+            box-shadow: inset -10px -10px 20px rgba(45, 20, 90, 0.5), 
+                        inset 10px 10px 20px rgba(255,255,255,0.4),
+                        0 0 35px rgba(143, 84, 255, 0.3),
+                        0 0 60px rgba(78, 159, 255, 0.2);
+        }
+        .eye-glow {
+            background: #fff;
+            box-shadow: 0 0 15px #fff, 0 0 30px #a5b4fc;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-gray-100 dark:bg-gray-900 h-screen w-screen flex justify-center items-center overflow-hidden">
+<div class="relative w-full h-full max-w-[430px] max-h-[932px] bg-white dark:bg-background-dark overflow-hidden flex flex-col shadow-2xl sm:rounded-[3rem]">
+<div class="absolute inset-0 bg-gradient-medicore-light dark:bg-gradient-medicore-dark z-0"></div>
+<div class="relative z-10 w-full px-6 pt-12 pb-4 flex justify-between items-center text-gray-500 dark:text-gray-400">
+<span class="text-sm font-medium tracking-wide">9:41</span>
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-[18px]">signal_cellular_alt</span>
+<span class="material-symbols-outlined text-[18px]">wifi</span>
+<span class="material-symbols-outlined text-[18px]">battery_full</span>
+</div>
+</div>
+<div class="relative z-10 flex-1 flex flex-col items-center justify-center w-full px-8 pb-20">
+<div class="relative w-64 h-64 flex items-center justify-center animate-float mb-12">
+<div class="absolute inset-0 rounded-full border border-primary/5 dark:border-white/5 scale-125 animate-[pulse_4s_ease-in-out_infinite]"></div>
+<div class="absolute inset-0 rounded-full border border-primary/5 dark:border-white/5 scale-150 animate-[pulse_4s_ease-in-out_infinite_1.5s]"></div>
+<div class="w-48 h-48 rounded-full orb-body relative flex items-center justify-center animate-breathe z-20">
+<div class="absolute top-8 left-8 w-16 h-8 bg-white/20 rounded-full blur-md transform -rotate-45"></div>
+<div class="flex space-x-8 mt-2 animate-eye-blink">
+<div class="w-10 h-14 bg-white rounded-full eye-glow relative">
+</div>
+<div class="w-10 h-14 bg-white rounded-full eye-glow relative"></div>
+</div>
+</div>
+<div class="absolute -bottom-10 w-24 h-4 bg-primary/30 blur-xl rounded-[100%] animate-pulse"></div>
+</div>
+<div class="text-center space-y-3 max-w-[280px] mx-auto fade-in z-20">
+<h2 class="text-lg font-normal text-gray-800 dark:text-gray-100 tracking-wide flex items-center justify-center gap-2">
+                    Generating Draft Summary...
+                </h2>
+<p class="text-xs text-gray-400 dark:text-gray-500 font-light">Cross-referencing with patient medical chart</p>
+</div>
+</div>
+<div class="relative z-20 bg-white/80 dark:bg-surface-dark/90 backdrop-blur-xl border-t border-gray-100 dark:border-white/5 pb-8 pt-4 px-8 rounded-t-[2.5rem]">
+<nav class="flex justify-between items-center">
+<button class="flex flex-col items-center space-y-1.5 text-gray-400 dark:text-gray-500 hover:text-primary transition-colors group w-16">
+<span class="material-symbols-outlined text-[24px] group-hover:-translate-y-1 transition-transform duration-300">home</span>
+<span class="text-[10px] font-medium tracking-wide opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-2">Home</span>
+</button>
+<button class="flex flex-col items-center space-y-1.5 text-gray-800 dark:text-gray-200 hover:text-primary transition-colors group w-16">
+<span class="material-symbols-outlined text-[28px] group-hover:-translate-y-1 transition-transform duration-300">history</span>
+<span class="text-[10px] font-medium tracking-wide mt-1">History</span>
+</button>
+<button class="flex flex-col items-center space-y-1.5 text-gray-400 dark:text-gray-500 hover:text-primary transition-colors group w-16">
+<span class="material-symbols-outlined text-[24px] group-hover:-translate-y-1 transition-transform duration-300">person</span>
+<span class="text-[10px] font-medium tracking-wide opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-2">Profile</span>
+</button>
+</nav>
+</div>
+<div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gray-300/80 dark:bg-gray-600/80 rounded-full z-30"></div>
+</div>
+</body></html>
