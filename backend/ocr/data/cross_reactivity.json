@@ -1,0 +1,7 @@
+{
+  "penicillin": ["amoxicillin", "ampicillin", "piperacillin", "nafcillin", "oxacillin", "dicloxacillin"],
+  "aspirin": ["nsaid", "ibuprofen", "naproxen", "ketorolac", "indomethacin", "celecoxib", "diclofenac"],
+  "sulfa": ["sulfamethoxazole", "bactrim", "trimethoprim-sulfamethoxazole", "furosemide", "hydrochlorothiazide"],
+  "cephalosporin": ["cefazolin", "ceftriaxone", "cefepime", "cephalexin"],
+  "contrast": ["gadolinium"]
+}
