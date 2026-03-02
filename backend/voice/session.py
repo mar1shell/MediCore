@@ -33,9 +33,28 @@ async def run_voice_session(client_ws: WebSocket) -> None:
 
 
 async def _forward(client_ws: WebSocket, el_ws: websockets.WebSocketClientProtocol) -> None:
-    """Browser → ElevenLabs."""
-    async for message in client_ws.iter_bytes():
-        await el_ws.send(message)
+    """Browser → ElevenLabs.
+
+    Handles both binary frames (raw PCM audio) and text frames (JSON control
+    messages such as pong replies to ElevenLabs ping events).
+    """
+    while True:
+        try:
+            data = await client_ws.receive()
+        except Exception:
+            break
+
+        msg_type = data.get("type")
+        if msg_type == "websocket.disconnect":
+            break
+
+        raw_bytes: bytes | None = data.get("bytes")
+        raw_text: str | None = data.get("text")
+
+        if raw_bytes:
+            await el_ws.send(raw_bytes)
+        elif raw_text:
+            await el_ws.send(raw_text)
 
 
 async def _backward(el_ws: websockets.WebSocketClientProtocol, client_ws: WebSocket) -> None:

@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException
 
 from backend.ocr.config import OCRConfig
 from backend.ocr.prompt_loader import load_prompt
-from backend.session import get_session
+from backend.session import get_session, add_safety_check
 from backend.schemas.safety import SafetyCheckRequest, SafetyCheckResponse
 from backend.schemas.common import ErrorResponse
 
@@ -82,8 +82,15 @@ async def check_safety(body: SafetyCheckRequest) -> SafetyCheckResponse:
         raise HTTPException(status_code=502, detail=f"Failed to reach Mistral API: {exc}") from exc
 
     data = json.loads(resp.json()["choices"][0]["message"]["content"])
-    return SafetyCheckResponse(
+    result = SafetyCheckResponse(
         is_safe=data.get("is_safe", True),
         issue=data.get("issue"),
         recommendation=data.get("recommendation"),
     )
+    add_safety_check(body.session_id, {
+        "drug_name": body.drug_name,
+        "is_safe": result.is_safe,
+        "issue": result.issue,
+        "recommendation": result.recommendation,
+    })
+    return result

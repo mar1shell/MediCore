@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Response
 
-from backend.session import get_session, delete_session
-from backend.schemas.session import SessionDataResponse
+from backend.session import get_session_record, delete_session
+from backend.schemas.session import SessionDataResponse, SafetyCheckRecord
 from backend.schemas.chart import EntitiesSchema, MedicationSchema
 from backend.schemas.common import ErrorResponse
 
@@ -15,18 +15,18 @@ _NOT_FOUND = {"model": ErrorResponse, "description": "No session found for the g
     response_model=SessionDataResponse,
     summary="Retrieve session data",
     description=(
-        "Return the extracted clinical entities stored for a given session. "
-        "Useful for the frontend to display the patient data associated with an active consultation "
-        "without having to re-upload the chart."
+        "Return the extracted clinical entities and all safety check results for a given session. "
+        "Poll this endpoint during a live voice session to detect safety alerts in real time."
     ),
-    response_description="Session ID and its associated extracted entities.",
+    response_description="Session ID, extracted entities, and accumulated safety check records.",
     responses={404: _NOT_FOUND},
 )
 async def get_session_data(session_id: str) -> SessionDataResponse:
-    entities = get_session(session_id)
-    if entities is None:
+    record = get_session_record(session_id)
+    if record is None:
         raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found.")
 
+    entities = record.entities
     return SessionDataResponse(
         session_id=session_id,
         entities=EntitiesSchema(
@@ -40,6 +40,15 @@ async def get_session_data(session_id: str) -> SessionDataResponse:
             extraction_notes=entities.extraction_notes,
             diagrams=entities.diagrams,
         ),
+        safety_checks=[
+            SafetyCheckRecord(
+                drug_name=sc["drug_name"],
+                is_safe=sc["is_safe"],
+                issue=sc.get("issue"),
+                recommendation=sc.get("recommendation"),
+            )
+            for sc in record.safety_checks
+        ],
     )
 
 

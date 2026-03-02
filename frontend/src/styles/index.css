@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Urbanist', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background: linear-gradient(180deg, #fdfbfd 0%, #f7f9ff 100%);
+    min-height: 100dvh;
+    @apply text-text-main;
+  }
+
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* 3D orb sphere effect */
+  .orb-sphere {
+    box-shadow:
+      inset -10px -10px 20px rgba(0, 0, 0, 0.3),
+      inset 10px 10px 20px rgba(255, 255, 255, 0.35);
+  }
+
+  /* Eye glow */
+  .eye-glow {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.9), 0 0 30px rgba(200, 180, 255, 0.5);
+  }
+
+  /* Gradient border trick */
+  .gradient-border-warning {
+    border: 1px solid rgba(249, 115, 22, 0.3);
+    box-shadow: 0 4px 20px -5px rgba(249, 115, 22, 0.15);
+  }
+}

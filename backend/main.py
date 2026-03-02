@@ -1,8 +1,9 @@
+import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load .env from the backend directory before any settings are read
-load_dotenv(Path(__file__).parent / ".env")
+# Load .env when running locally; on Railway env vars are injected directly.
+load_dotenv(Path(__file__).parent / ".env", override=False)
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -85,9 +86,14 @@ app = FastAPI(
 # ---------------------------------------------------------------------------
 # CORS — tighten origins in production
 # ---------------------------------------------------------------------------
+# FRONTEND_URL can be set on Railway to lock CORS to the hosted frontend.
+# Leave unset (or "*") during development / demo.
+_frontend_url = os.getenv("FRONTEND_URL", "*")
+_origins = [_frontend_url] if _frontend_url != "*" else ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
