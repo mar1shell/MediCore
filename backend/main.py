@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 # Load .env from the backend directory
 load_dotenv(Path(__file__).parent / ".env")
 
-from backend.api.routes import chart, voice, cross_reference
+from backend.api.routes import chart, voice, safety
 
 app = FastAPI(
     title="MediCore API",
@@ -33,7 +33,7 @@ app.add_middleware(
 # ---------------------------------------------------------------------------
 app.include_router(chart.router, tags=["Chart"])
 app.include_router(voice.router, tags=["Voice"])
-app.include_router(cross_reference.router, tags=["Cross-Reference"])
+app.include_router(safety.router, tags=["Safety"])
 
 
 @app.get("/", tags=["Health"])
