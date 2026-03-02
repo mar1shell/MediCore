@@ -79,7 +79,7 @@ export default function SessionPage() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[15px] font-semibold text-text-main truncate">
-              {entities?.diagnosis ? 'Current Patient' : 'Patient'}
+              {entities?.patient_name ?? 'Unknown Patient'}
             </p>
             <p className="text-[13px] text-text-sub font-medium">
               {entities?.diagnosis ?? 'General Consultation'}
@@ -167,10 +167,7 @@ export default function SessionPage() {
               <Button
                 variant="warning"
                 fullWidth
-                onClick={() => {
-                  dismissAlert()
-                  handleEndSession()
-                }}
+                onClick={dismissAlert}
               >
                 Modify Rx
               </Button>
