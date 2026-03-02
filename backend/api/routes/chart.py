@@ -8,6 +8,7 @@ from backend.schemas.chart import UploadChartResponse, EntitiesSchema, Medicatio
 from backend.schemas.common import ErrorResponse
 
 router = APIRouter()
+_config = OCRConfig.from_env()
 
 
 @router.post(
@@ -45,11 +46,10 @@ async def upload_chart(file: UploadFile = File(...)) -> UploadChartResponse:
         )
 
     contents = await file.read()
-    config = OCRConfig.from_env()
 
     # Stage 1: OCR extraction
     try:
-        async with ChartProcessor(config) as processor:
+        async with ChartProcessor(_config) as processor:
             ocr_result = await processor.process(
                 contents, filename=file.filename or "chart", content_type=file.content_type
             )
@@ -58,7 +58,7 @@ async def upload_chart(file: UploadFile = File(...)) -> UploadChartResponse:
 
     # Stage 2: Entity extraction
     try:
-        async with EntityExtractor(config) as extractor:
+        async with EntityExtractor(_config) as extractor:
             entities = await extractor.extract(ocr_result.full_text)
     except EntityExtractionError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc

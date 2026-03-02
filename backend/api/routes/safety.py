@@ -10,7 +10,8 @@ from backend.schemas.safety import SafetyCheckRequest, SafetyCheckResponse
 from backend.schemas.common import ErrorResponse
 
 router = APIRouter()
-SAFETY_SYSTEM_PROMPT = load_prompt("safety_check_system_prompt.txt")
+_config = OCRConfig.from_env()
+_SAFETY_SYSTEM_PROMPT = load_prompt("safety_check_system_prompt.txt")
 
 
 @router.post(
@@ -59,7 +60,6 @@ async def check_safety(body: SafetyCheckRequest) -> SafetyCheckResponse:
         })
         return safe_result
 
-    config = OCRConfig.from_env()
     user_msg = (
         f"Patient allergies: {', '.join(entities.allergies) or 'none'}\n"
         f"Current medications: {', '.join(entities.medication_names) or 'none'}\n"
@@ -72,7 +72,7 @@ async def check_safety(body: SafetyCheckRequest) -> SafetyCheckResponse:
         "temperature": 0.0,
         "response_format": {"type": "json_object"},
         "messages": [
-            {"role": "system", "content": SAFETY_SYSTEM_PROMPT},
+            {"role": "system", "content": _SAFETY_SYSTEM_PROMPT},
             {"role": "user", "content": user_msg},
         ],
     }
@@ -81,7 +81,7 @@ async def check_safety(body: SafetyCheckRequest) -> SafetyCheckResponse:
         async with httpx.AsyncClient(
             timeout=30.0,
             headers={
-                "Authorization": f"Bearer {config.api_key}",
+                "Authorization": f"Bearer {_config.api_key}",
                 "Content-Type": "application/json",
             },
         ) as client:
