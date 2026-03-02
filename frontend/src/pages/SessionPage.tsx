@@ -22,13 +22,14 @@ export default function SessionPage() {
     return () => disconnect()
   }, [connect, disconnect])
 
-  // Most recent unsafe alert that hasn't been dismissed
+  // Most recent unsafe alert that hasn't been dismissed (case-insensitive match)
   const activeAlert: SafetyCheckRecord | null =
     safetyChecks
-      .filter(sc => !sc.is_safe && !dismissedAlerts.has(sc.drug_name))
+      .filter(sc => !sc.is_safe && !dismissedAlerts.has(sc.drug_name.toLowerCase()))
       .at(-1) ?? null
 
   const hasAlert = activeAlert !== null
+
   function handleEndSession() {
     disconnect()
     navigate(`/analyzing/${sessionId}`)
@@ -36,7 +37,7 @@ export default function SessionPage() {
 
   function dismissAlert() {
     if (activeAlert) {
-      setDismissedAlerts(prev => new Set([...prev, activeAlert.drug_name]))
+      setDismissedAlerts(prev => new Set([...prev, activeAlert.drug_name.toLowerCase()]))
     }
   }
 

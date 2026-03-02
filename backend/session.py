@@ -28,10 +28,21 @@ def get_session_record(session_id: str) -> SessionRecord | None:
 
 
 def add_safety_check(session_id: str, result: dict) -> bool:
-    """Append a safety check result to the session. Returns False if session not found."""
+    """Append a safety check result to the session. Returns False if session not found.
+
+    Deduplicates by drug_name (case-insensitive): if a check for the same drug
+    already exists the previous result is replaced, so re-triggering the same
+    drug (e.g. when the agent re-mentions it while giving advice) never creates
+    a duplicate alert on the frontend.
+    """
     record = _store.get(session_id)
     if record is None:
         return False
+    drug_key = result.get("drug_name", "").lower().strip()
+    for i, existing in enumerate(record.safety_checks):
+        if existing.get("drug_name", "").lower().strip() == drug_key:
+            record.safety_checks[i] = result
+            return True
     record.safety_checks.append(result)
     return True
 
