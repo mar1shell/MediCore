@@ -19,17 +19,34 @@ ELEVENLABS_WS_URL = (
 
 
 async def run_voice_session(client_ws: WebSocket) -> None:
-    """Proxy audio between the browser and ElevenLabs in real time."""
+    """Proxy audio between the browser and ElevenLabs in real time.
+
+    Uses asyncio.wait(FIRST_COMPLETED) so that whichever side closes first
+    (browser disconnect or ElevenLabs disconnect) immediately cancels the other
+    direction and exits the `async with` block, which sends a proper WebSocket
+    close frame to ElevenLabs and ends the agent session immediately.
+    """
     settings = get_settings()
     url = ELEVENLABS_WS_URL.format(agent_id=settings.elevenlabs_agent_id)
-
     headers = {"xi-api-key": settings.elevenlabs_api_key}
 
     async with websockets.connect(url, additional_headers=headers) as el_ws:
-        await asyncio.gather(
-            _forward(client_ws, el_ws),
-            _backward(el_ws, client_ws),
+        forward_task = asyncio.create_task(_forward(client_ws, el_ws))
+        backward_task = asyncio.create_task(_backward(el_ws, client_ws))
+
+        # Block until either side finishes (browser disconnects or ElevenLabs ends)
+        _done, pending = await asyncio.wait(
+            [forward_task, backward_task],
+            return_when=asyncio.FIRST_COMPLETED,
         )
+
+        # Cancel the still-running direction so we exit the context manager
+        # immediately instead of waiting for ElevenLabs to time out.
+        for task in pending:
+            task.cancel()
+        await asyncio.gather(*pending, return_exceptions=True)
+
+    # `async with` exit → websockets sends a close frame to ElevenLabs ✓
 
 
 async def _forward(client_ws: WebSocket, el_ws: websockets.WebSocketClientProtocol) -> None:
