@@ -43,6 +43,14 @@ export interface UploadChartResponse {
   entities: Entities
 }
 
+// ── Transcript ────────────────────────────────────────────────────────────────
+
+export interface TranscriptLine {
+  role: 'doctor' | 'agent'
+  text: string
+  time: string   // e.g. "09:42 AM" — recorded client-side when event arrives
+}
+
 // ── Orb variant ───────────────────────────────────────────────────────────────
 
 export type OrbVariant = 'idle' | 'listening' | 'analyzing' | 'alert'

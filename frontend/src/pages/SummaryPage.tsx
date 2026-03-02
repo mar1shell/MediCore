@@ -10,12 +10,6 @@ import { useSession } from '../context/SessionContext'
 import { deleteSession, getSession } from '../api/client'
 import type { SafetyCheckRecord } from '../types'
 
-// Static mock transcript lines — to be replaced when backend adds transcript storage
-const MOCK_TRANSCRIPT: { role: 'doctor' | 'patient'; text: string; time: string }[] = [
-  { role: 'doctor', text: '"We will start you on a course of Amoxicillin for the infection."', time: '09:42 AM' },
-  { role: 'patient', text: '"Okay doctor. I\'ll pick that up today."', time: '09:43 AM' },
-]
-
 function getPatientId(sessionId: string): string {
   return `#${sessionId.replace(/-/g, '').slice(0, 4).toUpperCase()}-MED`
 }
@@ -23,7 +17,7 @@ function getPatientId(sessionId: string): string {
 export default function SummaryPage() {
   const { sessionId } = useParams<{ sessionId: string }>()
   const navigate = useNavigate()
-  const { entities, safetyChecks, setSafetyChecks, clearSession } = useSession()
+  const { entities, safetyChecks, transcript, setSafetyChecks, clearSession } = useSession()
   const [saving, setSaving] = useState(false)
 
   // Fetch latest session data (in case we navigated here from analyzing without real-time state)
@@ -151,40 +145,45 @@ export default function SummaryPage() {
         <Card>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-[15px] font-bold text-text-main">Transcript</h3>
-            <button className="text-[13px] font-semibold text-primary">View Full</button>
+            <span className="text-[12px] text-text-sub font-medium">{transcript.length} lines</span>
           </div>
 
-          <div className="space-y-3">
-            {MOCK_TRANSCRIPT.map((line, i) => {
-              const isDr = line.role === 'doctor'
-              return (
-                <div key={i}>
-                  <div className={`rounded-2xl px-4 py-3 ${isDr ? 'bg-purple-50/60 border border-purple-100/50' : 'bg-gray-50 border border-gray-100'}`}>
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <span className={`text-[11px] font-semibold uppercase tracking-wide ${isDr ? 'text-primary' : 'text-text-sub'}`}>
-                        {isDr ? 'Dr. Aris' : 'Patient'}
-                      </span>
-                      <span className="text-[11px] text-text-sub">{line.time}</span>
-                    </div>
-                    <p className="text-[13px] text-text-main leading-snug italic">{line.text}</p>
-                  </div>
-
-                  {/* Inject safety check callout after first doctor line if there's a conflict */}
-                  {isDr && hasConflict && primaryConflict && i === 0 && (
-                    <div className="mx-2 my-2 bg-red-50 border border-red-100 rounded-2xl px-4 py-2.5 flex items-start gap-2">
-                      <span className="w-2 h-2 bg-red-400 rounded-full mt-1.5 flex-shrink-0" />
-                      <div>
-                        <p className="text-[11px] font-bold text-red-500 uppercase tracking-wide">Safety Check</p>
-                        <p className="text-[12px] text-text-sub mt-0.5">
-                          Patient record indicates: {allergies.length > 0 ? `${allergies.join(', ')} allergy` : 'medication conflict'}
-                        </p>
+          {transcript.length === 0 ? (
+            <p className="text-[13px] text-text-sub text-center py-4">No transcript recorded for this session.</p>
+          ) : (
+            <div className="space-y-3">
+              {transcript.map((line, i) => {
+                const isDr = line.role === 'doctor'
+                return (
+                  <div key={i}>
+                    <div className={`rounded-2xl px-4 py-3 ${isDr ? 'bg-purple-50/60 border border-purple-100/50' : 'bg-gray-50 border border-gray-100'}`}>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className={`text-[11px] font-semibold uppercase tracking-wide ${isDr ? 'text-primary' : 'text-text-sub'}`}>
+                          {isDr ? 'Doctor' : 'MediCore AI'}
+                        </span>
+                        <span className="text-[11px] text-text-sub">{line.time}</span>
                       </div>
+                      <p className="text-[13px] text-text-main leading-snug">{line.text}</p>
                     </div>
-                  )}
-                </div>
-              )
-            })}
-          </div>
+
+                    {/* Inject safety alert callout after a doctor line that mentions a conflicting drug */}
+                    {isDr && hasConflict && primaryConflict &&
+                      line.text.toLowerCase().includes(primaryConflict.drug_name.toLowerCase()) && (
+                      <div className="mx-2 my-2 bg-red-50 border border-red-100 rounded-2xl px-4 py-2.5 flex items-start gap-2">
+                        <span className="w-2 h-2 bg-red-400 rounded-full mt-1.5 flex-shrink-0" />
+                        <div>
+                          <p className="text-[11px] font-bold text-red-500 uppercase tracking-wide">Safety Check Triggered</p>
+                          <p className="text-[12px] text-text-sub mt-0.5">
+                            {primaryConflict.issue ?? `${primaryConflict.drug_name} flagged against patient allergies`}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </Card>
 
         {/* Vitals */}

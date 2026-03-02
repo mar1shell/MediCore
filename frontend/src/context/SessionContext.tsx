@@ -1,16 +1,18 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
-import type { Entities, SafetyCheckRecord } from '../types'
+import type { Entities, SafetyCheckRecord, TranscriptLine } from '../types'
 
 interface SessionState {
   sessionId: string | null
   entities: Entities | null
   safetyChecks: SafetyCheckRecord[]
+  transcript: TranscriptLine[]
 }
 
 interface SessionContextValue extends SessionState {
   setSession: (id: string, entities: Entities) => void
   addSafetyCheck: (record: SafetyCheckRecord) => void
   setSafetyChecks: (records: SafetyCheckRecord[]) => void
+  addTranscriptLine: (line: TranscriptLine) => void
   clearSession: () => void
 }
 
@@ -21,10 +23,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     sessionId: null,
     entities: null,
     safetyChecks: [],
+    transcript: [],
   })
 
   const setSession = useCallback((id: string, entities: Entities) => {
-    setState({ sessionId: id, entities, safetyChecks: [] })
+    setState({ sessionId: id, entities, safetyChecks: [], transcript: [] })
   }, [])
 
   const addSafetyCheck = useCallback((record: SafetyCheckRecord) => {
@@ -35,12 +38,16 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setState(prev => ({ ...prev, safetyChecks: records }))
   }, [])
 
+  const addTranscriptLine = useCallback((line: TranscriptLine) => {
+    setState(prev => ({ ...prev, transcript: [...prev.transcript, line] }))
+  }, [])
+
   const clearSession = useCallback(() => {
-    setState({ sessionId: null, entities: null, safetyChecks: [] })
+    setState({ sessionId: null, entities: null, safetyChecks: [], transcript: [] })
   }, [])
 
   return (
-    <SessionContext.Provider value={{ ...state, setSession, addSafetyCheck, setSafetyChecks, clearSession }}>
+    <SessionContext.Provider value={{ ...state, setSession, addSafetyCheck, setSafetyChecks, addTranscriptLine, clearSession }}>
       {children}
     </SessionContext.Provider>
   )

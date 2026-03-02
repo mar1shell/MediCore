@@ -68,7 +68,7 @@ export function useVoiceSession(): UseVoiceSession {
   const [connected, setConnected] = useState(false)
   const [micError, setMicError] = useState<string | null>(null)
 
-  const { sessionId, setSafetyChecks } = useSession()
+  const { sessionId, setSafetyChecks, addTranscriptLine } = useSession()
 
   // ── polling ─────────────────────────────────────────────────────────────────
 
@@ -234,7 +234,11 @@ export function useVoiceSession(): UseVoiceSession {
           type: string
           audio_event?: { audio_base_64: string }
           ping_event?: { event_id: number }
+          agent_response_event?: { agent_response: string }
+          user_transcription_event?: { user_transcript: string }
         }
+
+        const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 
         switch (msg.type) {
           case 'audio':
@@ -244,12 +248,29 @@ export function useVoiceSession(): UseVoiceSession {
             break
 
           case 'ping':
-            // ElevenLabs requires a pong to keep the session alive
             ws.send(JSON.stringify({ type: 'pong', event_id: msg.ping_event?.event_id }))
             break
 
-          // conversation_initiation_metadata, agent_response, user_transcript,
-          // interruption — logged for future use (transcript display, etc.)
+          case 'agent_response':
+            if (msg.agent_response_event?.agent_response) {
+              addTranscriptLine({
+                role: 'agent',
+                text: msg.agent_response_event.agent_response,
+                time: now,
+              })
+            }
+            break
+
+          case 'user_transcript':
+            if (msg.user_transcription_event?.user_transcript) {
+              addTranscriptLine({
+                role: 'doctor',
+                text: msg.user_transcription_event.user_transcript,
+                time: now,
+              })
+            }
+            break
+
           default:
             break
         }
