@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException
 
 from backend.ocr.config import OCRConfig
 from backend.ocr.prompt_loader import load_prompt
-from backend.session import get_session, add_safety_check
+from backend.session import get_session, add_safety_check, was_recommended
 from backend.schemas.safety import SafetyCheckRequest, SafetyCheckResponse
 from backend.schemas.common import ErrorResponse
 
@@ -44,6 +44,20 @@ async def check_safety(body: SafetyCheckRequest) -> SafetyCheckResponse:
     entities = get_session(body.session_id)
     if entities is None:
         raise HTTPException(status_code=404, detail="Session not found.")
+
+    # Short-circuit: if this drug was previously recommended by our own safety
+    # checker, trust it and skip the LLM call. This prevents the cascade where
+    # ElevenLabs hears the agent say "consider <drug>" and immediately triggers
+    # another check_safety for that same drug, causing a chain of rejections.
+    if was_recommended(body.session_id, body.drug_name):
+        safe_result = SafetyCheckResponse(is_safe=True, issue=None, recommendation=None)
+        add_safety_check(body.session_id, {
+            "drug_name": body.drug_name,
+            "is_safe": True,
+            "issue": None,
+            "recommendation": None,
+        })
+        return safe_result
 
     config = OCRConfig.from_env()
     user_msg = (

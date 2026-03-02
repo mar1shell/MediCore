@@ -47,6 +47,24 @@ def add_safety_check(session_id: str, result: dict) -> bool:
     return True
 
 
+def was_recommended(session_id: str, drug_name: str) -> bool:
+    """Return True if drug_name was previously recommended by the safety checker in this session.
+
+    When our own LLM suggests a drug as a safe alternative, we must not re-check
+    it if ElevenLabs re-triggers check_safety for that name (which happens when
+    the agent reads its own recommendation aloud and the STT picks it up).
+    """
+    record = _store.get(session_id)
+    if record is None:
+        return False
+    key = drug_name.lower().strip()
+    for check in record.safety_checks:
+        rec = (check.get("recommendation") or "").lower()
+        if key and key in rec:
+            return True
+    return False
+
+
 def delete_session(session_id: str) -> bool:
     """Remove a session by ID. Returns True if it existed, False otherwise."""
     if session_id in _store:
