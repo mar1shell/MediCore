@@ -32,7 +32,7 @@ export default function SummaryPage() {
   const hasConflict = unsafeChecks.length > 0
   const primaryConflict = unsafeChecks[0]
 
-  // Derive patient name from diagnosis or fallback
+  const patientName = entities?.patient_name ?? null
   const diagnosis = entities?.diagnosis ?? null
   const allergies = entities?.allergies ?? []
   const medications = entities?.medications ?? []
@@ -77,10 +77,10 @@ export default function SummaryPage() {
         {/* Patient card */}
         <Card>
           <div className="flex items-center gap-3">
-            <Avatar name={diagnosis ?? 'Patient'} size="md" />
+            <Avatar name={patientName ?? diagnosis ?? 'Patient'} size="md" />
             <div className="flex-1 min-w-0">
               <p className="text-[17px] font-bold text-text-main truncate">
-                {diagnosis ? 'Patient' : 'Unknown Patient'}
+                {patientName ?? 'Unknown Patient'}
               </p>
               <p className="text-[13px] text-text-sub font-medium">
                 {sessionId ? getPatientId(sessionId) : ''} · {diagnosis ?? 'General Consultation'}

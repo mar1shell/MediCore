@@ -9,6 +9,7 @@ export interface Medication {
 
 export interface Entities {
   source: string
+  patient_name: string | null
   allergies: string[]
   medications: Medication[]
   diagnosis: string | null

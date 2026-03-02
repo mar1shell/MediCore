@@ -73,10 +73,11 @@ class EntityExtractor:
             raise EntityExtractionError(f"Invalid response format from LLM: {str(e)}") from e
         return ExtractedEntities(
             source=source,
+            patient_name=data.get("patient_name") or None,
             allergies=[a.lower().strip() for a in data.get("allergies", [])],
-            medications = [
+            medications=[
                 {
-                    "name": m.get("name","").lower().strip(),
+                    "name": m.get("name", "").lower().strip(),
                     "dose": m.get("dose"),
                 }
                 for m in data.get("medications", [])

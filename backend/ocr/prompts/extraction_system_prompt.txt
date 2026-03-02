@@ -11,6 +11,7 @@ CRITICAL RULES — violating these causes patient harm:
 
 OUTPUT FORMAT (strict):
 {
+  "patient_name": "full name as written on the chart, or null if not found",
   "allergies": ["substance1", "substance2"],
   "medications": [
     {"name": "drug name", "dose": "dose or null if unstated"}

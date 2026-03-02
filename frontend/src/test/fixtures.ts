@@ -2,6 +2,7 @@ import type { Entities, UploadChartResponse, SessionData, SafetyCheckRecord } fr
 
 export const MOCK_ENTITIES: Entities = {
   source: 'test-chart.pdf',
+  patient_name: 'John Doe',
   allergies: ['Penicillin'],
   medications: [
     { name: 'Amoxicillin', dose: '500mg' },

@@ -17,6 +17,7 @@ class EntitiesSchema(BaseModel):
         ...,
         description="Origin of the extracted data. Either `chart` (from uploaded document) or `spoken` (from voice transcription).",
     )
+    patient_name: str | None = Field(None, description="Full patient name as written on the chart, or null if not found.")
     allergies: list[str] = Field(
         default_factory=list,
         description="List of substance names the patient is allergic to, lowercased. Empty list means no known allergies (NKDA).",
@@ -37,6 +38,7 @@ class EntitiesSchema(BaseModel):
             "examples": [
                 {
                     "source": "chart",
+                    "patient_name": "Jane Doe",
                     "allergies": ["penicillin"],
                     "medications": [{"name": "metformin", "dose": "500mg twice daily"}],
                     "diagnosis": "type 2 diabetes",

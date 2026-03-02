@@ -33,6 +33,7 @@ class OCRResult:
 @dataclass
 class ExtractedEntities:
     source: str
+    patient_name: Optional[str] = None
     allergies: list = field(default_factory=list)
     medications: list = field(default_factory=list)
     diagnosis: Optional[str] = None
@@ -50,6 +51,7 @@ class ExtractedEntities:
     def to_dict(self) -> dict:
         return {
             "source": self.source,
+            "patient_name": self.patient_name,
             "allergies": self.allergies,
             "medications": self.medications,
             "diagnosis": self.diagnosis,
