@@ -29,12 +29,16 @@ function safeClose(ws: WebSocket | null): void {
   }
 }
 
-function float32ToPcm16(float32: Float32Array): ArrayBuffer {
+function float32ToPcm16Base64(float32: Float32Array): string {
   const pcm = new Int16Array(float32.length)
   for (let i = 0; i < float32.length; i++) {
     pcm[i] = Math.max(-32768, Math.min(32767, Math.round(float32[i] * 32768)))
   }
-  return pcm.buffer
+  // Convert raw bytes to base64 — ElevenLabs expects JSON {"user_audio_chunk":"<b64>"}
+  const bytes = new Uint8Array(pcm.buffer)
+  let binary = ''
+  for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i])
+  return btoa(binary)
 }
 
 function base64ToPcm16Float32(b64: string): Float32Array {
@@ -135,10 +139,19 @@ export function useVoiceSession(): UseVoiceSession {
     cancelledRef.current = false
     setMicError(null)
 
-    // 1. Request microphone permission (triggers the browser permission dialog)
+    // 1. Request microphone permission (triggers the browser permission dialog).
+    //    echoCancellation prevents the mic from picking up ElevenLabs' speaker
+    //    output and sending it back, which would cause the AI voice to repeat.
     let stream: MediaStream
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+        video: false,
+      })
     } catch (err) {
       if (!cancelledRef.current) {
         setMicError(
@@ -171,10 +184,21 @@ export function useVoiceSession(): UseVoiceSession {
 
     // 4. Wire up WebSocket handlers
     ws.onopen = () => {
+      // Send session_id as a dynamic variable FIRST, before any audio.
+      // ElevenLabs requires this so its tools (e.g. check-safety webhook) can
+      // reference the session. Without it the conversation fails immediately
+      // with "Missing required dynamic variables in tools: {session_id}".
+      if (sessionId) {
+        ws.send(JSON.stringify({
+          type: 'conversation_initiation_client_data',
+          dynamic_variables: { session_id: sessionId },
+        }))
+      }
+
       setConnected(true)
       startPolling()
 
-      // 5. Start mic capture: float32 → PCM-16 → binary WS frame
+      // 5. Start mic capture: float32 → PCM-16 base64 JSON frame
       const source = ctx.createMediaStreamSource(stream)
       // ScriptProcessorNode is deprecated but has universal browser support;
       // upgrade to AudioWorklet when browser support is more uniform.
@@ -183,14 +207,21 @@ export function useVoiceSession(): UseVoiceSession {
 
       processor.onaudioprocess = (e: AudioProcessingEvent) => {
         if (ws.readyState !== WebSocket.OPEN) return
-        const pcm = float32ToPcm16(e.inputBuffer.getChannelData(0))
-        ws.send(pcm)
+        // ElevenLabs Conversational AI requires JSON text frames, not binary:
+        // {"user_audio_chunk": "<base64_pcm_16kHz_16bit_mono>"}
+        const b64 = float32ToPcm16Base64(e.inputBuffer.getChannelData(0))
+        ws.send(JSON.stringify({ user_audio_chunk: b64 }))
       }
 
       source.connect(processor)
-      // ScriptProcessorNode must be connected to destination to fire (even if
-      // we don't actually want to play the captured audio locally)
-      processor.connect(ctx.destination)
+      // ScriptProcessorNode must be connected downstream to fire, but we must
+      // NOT route mic audio to the speakers — that would feed ElevenLabs' own
+      // voice back into the session and cause it to repeat itself.
+      // Route through a muted gain node so the processor fires silently.
+      const silentSink = ctx.createGain()
+      silentSink.gain.value = 0
+      processor.connect(silentSink)
+      silentSink.connect(ctx.destination)
     }
 
     ws.onmessage = (event: MessageEvent) => {
