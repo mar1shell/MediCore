@@ -31,6 +31,7 @@ async def get_session_data(session_id: str) -> SessionDataResponse:
         session_id=session_id,
         entities=EntitiesSchema(
             source=entities.source,
+            patient_name=entities.patient_name,
             allergies=entities.allergies,
             medications=[
                 MedicationSchema(name=m["name"], dose=m.get("dose"))

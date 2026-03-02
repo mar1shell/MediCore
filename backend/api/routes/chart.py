@@ -73,6 +73,7 @@ async def upload_chart(file: UploadFile = File(...)) -> UploadChartResponse:
         pages_processed=ocr_result.pages_processed,
         entities=EntitiesSchema(
             source=entities.source,
+            patient_name=entities.patient_name,
             allergies=entities.allergies,
             medications=[
                 MedicationSchema(name=m["name"], dose=m.get("dose"))
