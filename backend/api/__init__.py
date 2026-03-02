@@ -1,3 +1,3 @@
-from backend.api.routes import chart, voice, safety
+from backend.api.routes import chart, voice, safety, sessions
 
-__all__ = ["chart", "voice", "safety"]
+__all__ = ["chart", "voice", "safety", "sessions"]

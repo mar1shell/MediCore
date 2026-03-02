@@ -6,10 +6,10 @@ import httpx
 
 from backend.ocr.config import OCRConfig
 from backend.ocr.models import ExtractedEntities
-from backend.ocr.prompt_loader import _load_prompt
+from backend.ocr.prompt_loader import load_prompt
 
-EXTRACTION_SYSTEM_PROMPT = _load_prompt("extraction_system_prompt.txt")
-EXTRACTION_USER_TEMPLATE = _load_prompt("extraction_user_template.txt")
+EXTRACTION_SYSTEM_PROMPT = load_prompt("extraction_system_prompt.txt")
+EXTRACTION_USER_TEMPLATE = load_prompt("extraction_user_template.txt")
 logger = logging.getLogger(__name__)
 class EntityExtractor:
     LLM_MODEL = "mistral-large-latest"

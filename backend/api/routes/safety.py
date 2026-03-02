@@ -1,23 +1,46 @@
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
-import httpx
 import json
 
+import httpx
+from fastapi import APIRouter, HTTPException
+
 from backend.ocr.config import OCRConfig
-from backend.ocr.prompt_loader import _load_prompt
+from backend.ocr.prompt_loader import load_prompt
 from backend.session import get_session
+from backend.schemas.safety import SafetyCheckRequest, SafetyCheckResponse
+from backend.schemas.common import ErrorResponse
 
 router = APIRouter()
-SAFETY_SYSTEM_PROMPT = _load_prompt("safety_check_system_prompt.txt")
+SAFETY_SYSTEM_PROMPT = load_prompt("safety_check_system_prompt.txt")
 
 
-class SafetyCheckRequest(BaseModel):
-    drug_name: str
-    session_id: str
-
-
-@router.post("/check-safety")
-async def check_safety(body: SafetyCheckRequest):
+@router.post(
+    "/check-safety",
+    response_model=SafetyCheckResponse,
+    summary="Check drug safety against patient chart",
+    description=(
+        "**ElevenLabs webhook endpoint.**\n\n"
+        "Called automatically by the ElevenLabs voice agent mid-conversation when the doctor "
+        "mentions a drug they intend to prescribe. The backend looks up the patient's chart data "
+        "from the session store and asks Mistral Large to evaluate safety against:\n\n"
+        "- Direct allergies and cross-reactive allergies\n"
+        "- Drug-drug interactions with current medications\n"
+        "- Contraindications given the patient's diagnosis\n\n"
+        "The verdict is returned as structured JSON and read back to the doctor by the voice agent in real time."
+    ),
+    response_description="Safety verdict with an optional issue description and recommendation.",
+    responses={
+        404: {
+            "model": ErrorResponse,
+            "description": "No session found for the provided `session_id`.",
+        },
+        502: {
+            "model": ErrorResponse,
+            "description": "Upstream Mistral API error.",
+        },
+    },
+    tags=["Safety"],
+)
+async def check_safety(body: SafetyCheckRequest) -> SafetyCheckResponse:
     entities = get_session(body.session_id)
     if entities is None:
         raise HTTPException(status_code=404, detail="Session not found.")
@@ -39,21 +62,28 @@ async def check_safety(body: SafetyCheckRequest):
             {"role": "user", "content": user_msg},
         ],
     }
-    async with httpx.AsyncClient(
-        timeout=30.0,
-        headers={
-            "Authorization": f"Bearer {config.api_key}",
-            "Content-Type": "application/json",
-        },
-    ) as client:
-        resp = await client.post(
-            "https://api.mistral.ai/v1/chat/completions", json=payload
-        )
-        resp.raise_for_status()
+
+    try:
+        async with httpx.AsyncClient(
+            timeout=30.0,
+            headers={
+                "Authorization": f"Bearer {config.api_key}",
+                "Content-Type": "application/json",
+            },
+        ) as client:
+            resp = await client.post("https://api.mistral.ai/v1/chat/completions", json=payload)
+            resp.raise_for_status()
+    except httpx.HTTPStatusError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Mistral API error {exc.response.status_code}: {exc.response.text}",
+        ) from exc
+    except httpx.RequestError as exc:
+        raise HTTPException(status_code=502, detail=f"Failed to reach Mistral API: {exc}") from exc
 
     data = json.loads(resp.json()["choices"][0]["message"]["content"])
-    return {
-        "is_safe": data.get("is_safe", True),
-        "issue": data.get("issue"),
-        "recommendation": data.get("recommendation"),
-    }
+    return SafetyCheckResponse(
+        is_safe=data.get("is_safe", True),
+        issue=data.get("issue"),
+        recommendation=data.get("recommendation"),
+    )
