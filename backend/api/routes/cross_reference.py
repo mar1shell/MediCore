@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from cross_reference.comparator import compare_entities
+from backend.cross_reference.comparator import compare_entities
 
 router = APIRouter()
 

@@ -1,3 +1,3 @@
-from ocr.extractor import extract_text_from_pdf
+"""OCR module for medical chart processing."""
 
-__all__ = ["extract_text_from_pdf"]
+__all__ = []

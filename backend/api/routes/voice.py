@@ -1,6 +1,6 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
-from voice.session import run_voice_session
+from backend.voice.session import run_voice_session
 
 router = APIRouter()
 

@@ -11,7 +11,7 @@ import asyncio
 import websockets
 from fastapi import WebSocket
 
-from config import get_settings
+from backend.config import get_settings
 
 ELEVENLABS_WS_URL = (
     "wss://api.elevenlabs.io/v1/convai/conversation?agent_id={agent_id}"
